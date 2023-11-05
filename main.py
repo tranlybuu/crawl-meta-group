@@ -26,7 +26,8 @@ if __name__ == "__main__":
 
     search_list = str(input("\n\nNhập tên nhóm tìm kiếm: ")).strip().replace(" ", "%20")
     search_list = search_list.split("|")
-    time_scroll = int(input("\n\nNhập số lần cuộn trang: ").strip())
+    time_scroll = int(input("\nNhập số lần cuộn trang: ").strip())
+    min_member = int(input("\nNhập số thành viên tối thiểu: ").strip())
     
     options = uc.ChromeOptions()
     options.add_argument("--disable-blink-features=AutomationControlled")
@@ -80,16 +81,17 @@ if __name__ == "__main__":
                         total_member = int(total_member[0])*1000000 + int(decimal)*1000
                     else:
                         total_member = member_data[0]
-                    entries.append({
-                        "url": url,
-                        "name": name,
-                        "status": status,
-                        "total_member": total_member
-                    })
+                    if total_member >= min_member:
+                        entries.append({
+                            "id": url.replace("https://www.facebook.com/groups/", "").replace("?__tn__=%3C", "").replace("/", "").strip("/").strip(),
+                            "name": name
+                        })
+                    else:
+                        continue
                 except:
                     continue
             filename = str(search).replace("%20", "_").strip("_").strip("") + "_" + str(datetime.datetime.now()).replace(" ", "_").replace(":", "-") + ".csv"
             with open(filename, 'w', encoding='utf-8') as file:
-                file.write("name,status,member,url\n")
+                file.write("name,id\n")
                 for entry in entries:
-                    file.write(str(entry["name"]).replace(",", " ") + ',' + str(entry["status"]) + ',' + str(entry["total_member"]) + ',' + str(entry["url"]) + '\n')
+                    file.write(str(entry["name"]).replace(",", " ") + ',' + str(entry["id"]) + '\n')
