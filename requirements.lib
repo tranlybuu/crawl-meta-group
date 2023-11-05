@@ -1,0 +1,4 @@
+undetected_chromedriver
+python-dotenv
+pyautogui
+selenium==4.9
